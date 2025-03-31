@@ -1,9 +1,13 @@
 package webApplication.server;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,31 +26,46 @@ public class Controller {
     }
     
     @GetMapping("/movies")
-    public List<MovieTV> allMovies() {
-        System.out.println("accessing all movies");
-        return service.getAllMovies();
+    public ResponseEntity<MovieTV> allMovies() {
+        CustomizedResponse customizedResponse = new CustomizedResponse(" A list of all movies" , service.getAllMovies());
+        
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
     }
     @GetMapping(value = "/movies", params = "featured")
-    public List<MovieTV> featuredMovies(@RequestParam Boolean featured) {
-        System.out.println("accessing movies featured: "+featured);
-        return service.getfeaturedMovies(featured);
+    public ResponseEntity<MovieTV> featuredMovies(@RequestParam Boolean featured) {
+        CustomizedResponse customizedResponse = new CustomizedResponse(" A list of all movies featured: "+ featured , service.getfeaturedMovies(featured));
+        
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
     }
 
     @GetMapping("/TVs")
-    public List<MovieTV> allTvs() {
-        System.out.println("accessing all Tvs");
-        return service.getAllTVs();
+    public ResponseEntity<MovieTV> allTvs() {
+        CustomizedResponse customizedResponse = new CustomizedResponse(" A list of all TVs" , service.getAllTVs());
+        
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
     }
+
     @GetMapping(value = "/TVs", params = "featured")
-    public List<MovieTV> featuredTVs(@RequestParam Boolean featured) {
-        System.out.println("accessing TVs featured: "+featured);
-        return service.getfeaturedTVs(featured);
+    public ResponseEntity<MovieTV> featuredTVs(@RequestParam Boolean featured) {
+        CustomizedResponse customizedResponse = new CustomizedResponse(" A list of all TVs featured: "+ featured , service.getfeaturedTVs(featured));
+        
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
     }
 
     @GetMapping(value = "/movieTv", params = "id")
-    public Optional<MovieTV> findMoviesTvByID(@RequestParam String id) {
+    public ResponseEntity<MovieTV> findMoviesTvByID(@RequestParam String id) {
         System.out.println("accessing moviesTv id: "+id);
-        return repository.findById(Integer.parseInt(id));
+
+        CustomizedResponse customizedResponse = null;
+        try{
+            //moviestv = service.findMovieTvByID(id);
+            customizedResponse = new CustomizedResponse(" Movie with id " + id , Collections.singletonList(service.findMovieTvByID(id)));
+        } catch (Exception e){
+            customizedResponse = new CustomizedResponse(e.getMessage(), null);
+
+            return new ResponseEntity(customizedResponse, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
     }
     @GetMapping(value = "/movieTv", params = "title")
     public List<MovieTV> findMoviesTvByTitle(@RequestParam String title) {

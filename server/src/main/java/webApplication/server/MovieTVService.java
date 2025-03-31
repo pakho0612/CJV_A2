@@ -17,7 +17,15 @@ public class MovieTVService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
-
+    public Optional<MovieTV> findMovieTvByID(String id) throws Exception{
+        Optional<MovieTV> movietv = repository.findById(Integer.parseInt(id));
+        if (!movietv.isPresent())
+        {
+            throw new Exception (" Movie with " + id + " is not found ");
+        }
+        return movietv;
+    }
+    
     public List<MovieTV> getAllMovies() {
         Query query = new Query();
         query.addCriteria(Criteria.where("type").is("Movie"));
