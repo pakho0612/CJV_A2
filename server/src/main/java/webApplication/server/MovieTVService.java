@@ -56,10 +56,14 @@ public class MovieTVService {
         return TV;
     }
 
-    public List<MovieTV> searchMovieTVs(String titleString) {
+    public List<MovieTV> searchMovieTVs(String titleString) throws Exception{
         Query query = new Query();
         query.addCriteria(Criteria.where("title").regex(titleString, "i"));
-        List<MovieTV> TV = mongoTemplate.find(query, MovieTV.class);
-        return TV;
+        List<MovieTV> movietvs = mongoTemplate.find(query, MovieTV.class);
+        if (movietvs.isEmpty())
+        {
+            throw new Exception (" Movie/TV with title" + titleString + " is not found ");
+        }
+        return movietvs;
     }
 }

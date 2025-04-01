@@ -1,11 +1,8 @@
 package webApplication.server;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,8 +65,14 @@ public class Controller {
         return new ResponseEntity(customizedResponse, HttpStatus.OK);
     }
     @GetMapping(value = "/movieTv", params = "title")
-    public List<MovieTV> findMoviesTvByTitle(@RequestParam String title) {
-        System.out.println("accessing moviesTv querystring: "+title);
-        return service.searchMovieTVs(title);
+    public ResponseEntity<MovieTV> findMoviesTvByTitle(@RequestParam String title) {
+        CustomizedResponse customizedResponse = null;
+        try{
+            customizedResponse = new CustomizedResponse(" Movie / TV with title: " + title , service.searchMovieTVs(title));
+        }catch (Exception e){
+            customizedResponse = new CustomizedResponse(e.getMessage(), null);
+            return new ResponseEntity(customizedResponse, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
     }
 }
