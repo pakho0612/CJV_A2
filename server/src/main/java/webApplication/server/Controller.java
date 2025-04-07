@@ -22,6 +22,8 @@ public class Controller {
     private MovieTVRepository repository;
     @Autowired
     private MovieTVService service;
+    @Autowired
+    private UserService userService;
     
     @RequestMapping("/")
     public String home() {
@@ -116,5 +118,29 @@ public class Controller {
             return new ResponseEntity(customizedResponse, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/users", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<UserModel> addUser(@RequestBody UserModel newUser) {
+        CustomizedResponse customizedResponse = null;
+        try{
+            customizedResponse = new CustomizedResponse(" Added User " , Collections.singletonList(userService.addUser(newUser)));
+        } catch (Exception e){
+            customizedResponse = new CustomizedResponse(e.getMessage(), null);
+            return new ResponseEntity(customizedResponse, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UserModel> getUser(@PathVariable("id") String id) {
+        CustomizedResponse customizedResponse = null;
+        try{
+            customizedResponse = new CustomizedResponse(" Get User with id " + id , Collections.singletonList(userService.getUser(id)));
+        } catch (Exception e){
+            customizedResponse = new CustomizedResponse(e.getMessage(), null);
+            return new ResponseEntity(customizedResponse, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
     }
 }
