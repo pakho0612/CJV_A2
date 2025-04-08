@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class Controller {
     @Autowired
     private MovieTVRepository repository;
@@ -77,6 +79,28 @@ public class Controller {
         CustomizedResponse customizedResponse = null;
         try{
             customizedResponse = new CustomizedResponse(" Get Movie / TV with title: " + title , service.searchMovieTVs(title));
+        }catch (Exception e){
+            customizedResponse = new CustomizedResponse(e.getMessage(), null);
+            return new ResponseEntity(customizedResponse, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
+    }
+    @GetMapping(value = "/movies", params = "title")
+    public ResponseEntity<MovieTV> findMovieByTitle(@RequestParam String title) {
+        CustomizedResponse customizedResponse = null;
+        try{
+            customizedResponse = new CustomizedResponse(" Get Movie with title: " + title , service.searchMovie(title));
+        }catch (Exception e){
+            customizedResponse = new CustomizedResponse(e.getMessage(), null);
+            return new ResponseEntity(customizedResponse, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(customizedResponse, HttpStatus.OK);
+    }
+    @GetMapping(value = "/TVs", params = "title")
+    public ResponseEntity<MovieTV> findTvByTitle(@RequestParam String title) {
+        CustomizedResponse customizedResponse = null;
+        try{
+            customizedResponse = new CustomizedResponse(" Get TV with title: " + title , service.searchTV(title));
         }catch (Exception e){
             customizedResponse = new CustomizedResponse(e.getMessage(), null);
             return new ResponseEntity(customizedResponse, HttpStatus.NOT_FOUND);

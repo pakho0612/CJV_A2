@@ -58,6 +58,28 @@ public class MovieTVService {
         return TV;
     }
 
+    public List<MovieTV> searchMovie(String titleString) throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("type").is("Movie"));
+        query.addCriteria(Criteria.where("title").regex(titleString, "i"));
+        List<MovieTV> movietvs = mongoTemplate.find(query, MovieTV.class);
+        if (movietvs.isEmpty())
+        {
+            throw new Exception (" Movie with title" + titleString + " is not found ");
+        }
+        return movietvs;
+    }
+    public List<MovieTV> searchTV(String titleString) throws Exception{
+        Query query = new Query();
+        query.addCriteria(Criteria.where("type").is("TV"));
+        query.addCriteria(Criteria.where("title").regex(titleString, "i"));
+        List<MovieTV> movietvs = mongoTemplate.find(query, MovieTV.class);
+        if (movietvs.isEmpty())
+        {
+            throw new Exception (" TV with title" + titleString + " is not found ");
+        }
+        return movietvs;
+    }
     public List<MovieTV> searchMovieTVs(String titleString) throws Exception{
         Query query = new Query();
         query.addCriteria(Criteria.where("title").regex(titleString, "i"));
